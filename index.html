@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Arena Avenida Beach — Disponibilidade</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #f0f4f8;
+            font-family: 'Segoe UI', sans-serif;
+        }
+
+        .card {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            width: 360px;
+            text-align: center;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .logo {
+            font-size: 22px;
+            font-weight: 700;
+            color: #1a1a2e;
+            margin-bottom: 8px;
+        }
+
+        .subtitulo {
+            font-size: 13px;
+            color: #888;
+            margin-bottom: 32px;
+        }
+
+        .status-circle {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            margin: 0 auto 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 40px;
+        }
+
+        .disponivel .status-circle {
+            background: #e6f9f0;
+        }
+
+        .indisponivel .status-circle {
+            background: #fdecea;
+        }
+
+        .status-texto {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .disponivel .status-texto {
+            color: #1db954;
+        }
+
+        .indisponivel .status-texto {
+            color: #e53935;
+        }
+
+        .status-descricao {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 28px;
+        }
+
+        .eventos {
+            text-align: left;
+            border-top: 1px solid #eee;
+            padding-top: 20px;
+        }
+
+        .eventos h3 {
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #aaa;
+            margin-bottom: 12px;
+        }
+
+        .evento-item {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 10px 14px;
+            margin-bottom: 8px;
+            font-size: 13px;
+        }
+
+        .evento-titulo {
+            font-weight: 600;
+            color: #333;
+        }
+
+        .evento-horario {
+            color: #888;
+            margin-top: 2px;
+        }
+
+        .atualizacao {
+            font-size: 11px;
+            color: #bbb;
+            margin-top: 20px;
+        }
+
+        .carregando {
+            color: #aaa;
+            font-size: 16px;
+            padding: 20px 0;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="card" id="card">
+        <div class="logo">🏖️ Arena Avenida Beach</div>
+        <div class="subtitulo">Disponibilidade para hoje</div>
+        <div class="carregando">Carregando...</div>
+    </div>
+
+    <script>
+        async function carregarDisponibilidade() {
+            const card = document.getElementById("card");
+
+            try {
+                const resp = await fetch("/api/disponibilidade");
+                const dados = await resp.json();
+
+                const statusClasse = dados.disponivel ? "disponivel" : "indisponivel";
+                const emoji = dados.disponivel ? "✅" : "🔴";
+                const textoStatus = dados.disponivel ? "Disponível" : "Indisponível";
+                const descricao = dados.disponivel
+                    ? "A quadra está livre para reservas hoje."
+                    : "A quadra já está com agenda cheia para hoje.";
+
+                const agora = new Date().toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" });
+
+                const eventosHTML = dados.eventos.length > 0
+                    ? `<div class="eventos">
+              <h3>Eventos de hoje</h3>
+              ${dados.eventos.map(e => {
+                        const inicio = e.inicio ? new Date(e.inicio).toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" }) : "—";
+                        const fim = e.fim ? new Date(e.fim).toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" }) : "—";
+                        return `<div class="evento-item">
+                  <div class="evento-titulo">${e.titulo || "Sem título"}</div>
+                  <div class="evento-horario">${inicio} – ${fim}</div>
+                </div>`;
+                    }).join("")}
+            </div>`
+                    : "";
+
+                card.className = `card ${statusClasse}`;
+                card.innerHTML = `
+          <div class="logo">🏖️ Arena Avenida Beach</div>
+          <div class="subtitulo">Disponibilidade para hoje</div>
+          <div class="status-circle">${emoji}</div>
+          <div class="status-texto">${textoStatus}</div>
+          <div class="status-descricao">${descricao}</div>
+          ${eventosHTML}
+          <div class="atualizacao">Atualizado às ${agora}</div>
+        `;
+            } catch (err) {
+                card.innerHTML = `
+          <div class="logo">🏖️ Arena Avenida Beach</div>
+          <div class="subtitulo">Disponibilidade para hoje</div>
+          <div class="status-descricao" style="color:#e53935; padding: 20px 0;">
+            Erro ao carregar disponibilidade.<br/>Tente novamente em instantes.
+          </div>
+        `;
+            }
+        }
+
+        carregarDisponibilidade();
+        // Atualiza automaticamente a cada 5 minutos
+        setInterval(carregarDisponibilidade, 5 * 60 * 1000);
+    </script>
+</body>
+
+</html>
