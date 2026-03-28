@@ -6,6 +6,8 @@ module.exports = async function handler(req, res) {
 
         const auth = new google.auth.GoogleAuth({
             credentials: {
+                type: "service_account",
+                project_id: "feisty-vector-491600-q1",
                 client_email: process.env.GOOGLE_CLIENT_EMAIL,
                 private_key: privateKey,
             },
