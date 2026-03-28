@@ -5,9 +5,10 @@ module.exports = async function handler(req, res) {
         const privateKey = process.env.GOOGLE_PRIVATE_KEY;
 
         // Tenta diferentes formas de formatar a chave
-        const formattedKey = privateKey.includes("\\n")
-            ? privateKey.replace(/\\n/g, "\n")
-            : privateKey;
+        const formattedKey = privateKey
+            .replace(/-----BEGIN PRIVATE KEY-----/, "-----BEGIN PRIVATE KEY-----\n")
+            .replace(/-----END PRIVATE KEY-----/, "\n-----END PRIVATE KEY-----\n")
+            .replace(/ /g, "\n");
 
         const auth = new google.auth.GoogleAuth({
             credentials: {
