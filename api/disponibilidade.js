@@ -2,18 +2,12 @@ const { google } = require("googleapis");
 
 module.exports = async function handler(req, res) {
     try {
-        const privateKey = process.env.GOOGLE_PRIVATE_KEY;
-
-        // Tenta diferentes formas de formatar a chave
-        const formattedKey = privateKey
-            .replace(/-----BEGIN PRIVATE KEY-----/, "-----BEGIN PRIVATE KEY-----\n")
-            .replace(/-----END PRIVATE KEY-----/, "\n-----END PRIVATE KEY-----\n")
-            .replace(/ /g, "\n");
+        const privateKey = process.env.GOOGLE_PRIVATE_KEY.replace(/\\n/g, "\n");
 
         const auth = new google.auth.GoogleAuth({
             credentials: {
                 client_email: process.env.GOOGLE_CLIENT_EMAIL,
-                private_key: formattedKey,
+                private_key: privateKey,
             },
             scopes: ["https://www.googleapis.com/auth/calendar.readonly"],
         });
@@ -45,7 +39,6 @@ module.exports = async function handler(req, res) {
             })),
         });
     } catch (err) {
-        // Retorna detalhes do erro pra facilitar debug
         res.status(500).json({
             erro: err.message,
             tipo: err.constructor.name,
