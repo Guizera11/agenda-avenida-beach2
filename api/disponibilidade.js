@@ -46,7 +46,12 @@ module.exports = async function handler(req, res) {
         const resultado = horarios.map((hora) => {
             const ocupados = eventos.filter((e) => {
                 const inicio = new Date(e.start.dateTime || e.start.date);
-                return inicio.getHours() === hora;
+                const fim = new Date(e.end.dateTime || e.end.date);
+                const horaInicio = hora;
+                const horaFim = hora + 1;
+                // Evento ocupa o horário se há sobreposição
+                return inicio.getHours() < horaFim && fim.getHours() > horaInicio ||
+                    (fim.getHours() === horaInicio && fim.getMinutes() > 0);
             }).length;
 
             return {
