@@ -1,5 +1,8 @@
 const { google } = require("googleapis");
 
+const HORARIOS_SEMANA = [16, 17, 18, 19, 20, 21, 22, 23]; // seg-sex 16h às 23h (última começa 23h, termina meia-noite)
+const HORARIOS_FIMDESEMANA = [9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21]; // sáb-dom 9h às 21h
+
 module.exports = async function handler(req, res) {
     try {
         const privateKey = process.env.GOOGLE_PRIVATE_KEY.replace(/\\n/g, "\n");
@@ -16,37 +19,55 @@ module.exports = async function handler(req, res) {
 
         const calendar = google.calendar({ version: "v3", auth });
 
-        const hoje = new Date();
-        const inicioDoDia = new Date(hoje.setHours(0, 0, 0, 0)).toISOString();
-        const fimDoDia = new Date(hoje.setHours(23, 59, 59, 999)).toISOString();
+        // Pega a data do query param ?data=2024-03-27 ou usa hoje
+        const dataParam = req.query.data;
+        const data = dataParam ? new Date(dataParam + "T00:00:00-03:00") : new Date();
+
+        const diaSemana = data.getDay(); // 0=dom, 6=sáb
+        const ehFimDeSemana = diaSemana === 0 || diaSemana === 6;
+        const horarios = ehFimDeSemana ? HORARIOS_FIMDESEMANA : HORARIOS_SEMANA;
+
+        const inicioDoDia = new Date(data);
+        inicioDoDia.setHours(0, 0, 0, 0);
+        const fimDoDia = new Date(data);
+        fimDoDia.setHours(23, 59, 59, 999);
 
         const resposta = await calendar.events.list({
             calendarId: "avenidabeach2@gmail.com",
-            timeMin: inicioDoDia,
-            timeMax: fimDoDia,
+            timeMin: inicioDoDia.toISOString(),
+            timeMax: fimDoDia.toISOString(),
             singleEvents: true,
             orderBy: "startTime",
         });
 
         const eventos = resposta.data.items || [];
-        const disponivel = eventos.length < 2;
+
+        // Para cada horário, conta quantas quadras estão ocupadas
+        const resultado = horarios.map((hora) => {
+            const ocupados = eventos.filter((e) => {
+                const inicio = new Date(e.start.dateTime || e.start.date);
+                return inicio.getHours() === hora;
+            }).length;
+
+            return {
+                hora: `${String(hora).padStart(2, "0")}:00`,
+                quadrasOcupadas: ocupados,
+                disponivel: ocupados < 4,
+                vagasRestantes: Math.max(0, 4 - ocupados),
+            };
+        });
 
         res.status(200).json({
-            disponivel,
-            totalEventos: eventos.length,
-            eventos: eventos.map((e) => ({
-                titulo: e.summary,
-                inicio: e.start.dateTime || e.start.date,
-                fim: e.end.dateTime || e.end.date,
-            })),
+            data: data.toISOString().split("T")[0],
+            diaSemana,
+            horarios: resultado,
         });
+
     } catch (err) {
         res.status(500).json({
             erro: err.message,
-            tipo: err.constructor.name,
             temEmail: !!process.env.GOOGLE_CLIENT_EMAIL,
             temChave: !!process.env.GOOGLE_PRIVATE_KEY,
-            inicioChave: process.env.GOOGLE_PRIVATE_KEY?.substring(0, 50)
         });
     }
 };
