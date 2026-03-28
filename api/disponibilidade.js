@@ -49,8 +49,8 @@ module.exports = async function handler(req, res) {
                 const fim = new Date(e.end.dateTime || e.end.date);
 
                 // Converte tudo pra minutos desde meia-noite pra facilitar comparação
-                const inicioMin = inicio.getHours() * 60 + inicio.getMinutes();
-                const fimMin = fim.getHours() * 60 + fim.getMinutes();
+                const inicioMin = (inicio.getUTCHours() - 3 + 24) % 24 * 60 + inicio.getUTCMinutes();
+                const fimMin = (fim.getUTCHours() - 3 + 24) % 24 * 60 + fim.getUTCMinutes();
                 const slotInicio = hora * 60;
                 const slotFim = (hora + 1) * 60;
 
