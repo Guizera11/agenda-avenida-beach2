@@ -321,15 +321,14 @@
                 dados.horarios.forEach(h => {
                     const horaFim = String(parseInt(h.hora) + 1).padStart(2, "0") + ":00";
                     html += `
-            <div class="horario-item">
-              <div class="horario-hora">${h.hora} – ${horaFim}</div>
-              <div class="horario-info">
-                ${h.vagasRestantes > 0 ? `<span class="vagas">${h.vagasRestantes} quadra${h.vagasRestantes > 1 ? "s" : ""} livre${h.vagasRestantes > 1 ? "s" : ""}</span>` : ""}
-                <span class="badge ${h.disponivel ? "disponivel" : "indisponivel"}">
-                  ${h.disponivel ? "Disponível" : "Lotado"}
-                </span>
-              </div>
-            </div>`;
+                        <div class="horario-item">
+                            <div class="horario-hora">${h.hora}</div>
+                            <div class="horario-info">
+                                <span class="badge ${h.disponivel ? "disponivel" : "indisponivel"}">
+                                ${h.disponivel ? "Disponível" : "Lotado"}
+                                </span>
+                            </div>
+                        </div>`;
                 });
 
                 html += `<div class="atualizacao">Atualizado às ${agora}</div>`;
