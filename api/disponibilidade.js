@@ -63,16 +63,12 @@ module.exports = async function handler(req, res) {
             };
         });
 
+
         res.status(200).json({
             data: data.toISOString().split("T")[0],
             diaSemana,
             horarios: resultado,
-            totalEventos: eventos.length,
-            debug: eventos.map(e => ({
-                titulo: e.summary,
-                inicio: e.start.dateTime,
-                fim: e.end.dateTime
-            }))
+
         });
 
     } catch (err) {
