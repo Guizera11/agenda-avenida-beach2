@@ -74,10 +74,15 @@ module.exports = async function handler(req, res) {
         });
 
     } catch (err) {
-        res.status(500).json({
-            erro: err.message,
-            temEmail: !!process.env.GOOGLE_CLIENT_EMAIL,
-            temChave: !!process.env.GOOGLE_PRIVATE_KEY,
+        res.status(200).json({
+            data: data.toISOString().split("T")[0],
+            diaSemana,
+            horarios: resultado,
+            debug: eventos.map(e => ({
+                titulo: e.summary,
+                inicio: e.start.dateTime,
+                fim: e.end.dateTime
+            }))
         });
     }
 };
