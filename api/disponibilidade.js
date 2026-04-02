@@ -26,10 +26,10 @@ module.exports = async function handler(req, res) {
         const ehFimDeSemana = diaSemana === 0 || diaSemana === 6;
         const horarios = ehFimDeSemana ? HORARIOS_FIMDESEMANA : HORARIOS_SEMANA;
 
-        const inicioDoDia = new Date(data);
-        inicioDoDia.setHours(0, 0, 0, 0);
-        const fimDoDia = new Date(data);
-        fimDoDia.setHours(23, 59, 59, 999);
+
+        const dataStr = dataParam || new Date().toISOString().split("T")[0];
+        const inicioDoDia = new Date(dataStr + "T00:00:00-03:00");
+        const fimDoDia = new Date(dataStr + "T23:59:59-03:00");
 
         const resposta = await calendar.events.list({
             calendarId: "avenidabeach2@gmail.com",
