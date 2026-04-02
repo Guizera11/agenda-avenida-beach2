@@ -1,7 +1,7 @@
 const { google } = require("googleapis");
 
-const HORARIOS_SEMANA = [16, 17, 18, 19, 20, 21, 22, 23]; // seg-sex 16h às 23h (última começa 23h, termina meia-noite)
-const HORARIOS_FIMDESEMANA = [9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21]; // sáb-dom 9h às 21h
+const HORARIOS_SEMANA = [16, 17, 18, 19, 20, 21, 22, 23];
+const HORARIOS_FIMDESEMANA = [9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21];
 
 module.exports = async function handler(req, res) {
     try {
@@ -19,11 +19,10 @@ module.exports = async function handler(req, res) {
 
         const calendar = google.calendar({ version: "v3", auth });
 
-        // Pega a data do query param ?data=2024-03-27 ou usa hoje
         const dataParam = req.query.data;
         const data = dataParam ? new Date(dataParam + "T00:00:00-03:00") : new Date();
 
-        const diaSemana = data.getDay(); // 0=dom, 6=sáb
+        const diaSemana = data.getDay();
         const ehFimDeSemana = diaSemana === 0 || diaSemana === 6;
         const horarios = ehFimDeSemana ? HORARIOS_FIMDESEMANA : HORARIOS_SEMANA;
 
@@ -43,19 +42,16 @@ module.exports = async function handler(req, res) {
 
         const eventos = resposta.data.items || [];
 
-        // Para cada horário, conta quantas quadras estão ocupadas
         const resultado = horarios.map((hora) => {
             const ocupados = eventos.filter((e) => {
                 const inicio = new Date(e.start.dateTime || e.start.date);
                 const fim = new Date(e.end.dateTime || e.end.date);
 
-                // Converte tudo pra minutos desde meia-noite pra facilitar comparação
                 const inicioMin = (inicio.getUTCHours() - 3 + 24) % 24 * 60 + inicio.getUTCMinutes();
                 const fimMin = (fim.getUTCHours() - 3 + 24) % 24 * 60 + fim.getUTCMinutes();
                 const slotInicio = hora * 60;
                 const slotFim = (hora + 1) * 60;
 
-                // Há sobreposição se o evento começa antes do slot terminar E termina depois do slot começar
                 return inicioMin < slotFim && fimMin > slotInicio;
             }).length;
 
@@ -71,13 +67,6 @@ module.exports = async function handler(req, res) {
             data: data.toISOString().split("T")[0],
             diaSemana,
             horarios: resultado,
-        });
-
-    } catch (err) {
-        res.status(200).json({
-            data: data.toISOString().split("T")[0],
-            diaSemana,
-            horarios: resultado,
             totalEventos: eventos.length,
             debug: eventos.map(e => ({
                 titulo: e.summary,
@@ -85,5 +74,8 @@ module.exports = async function handler(req, res) {
                 fim: e.end.dateTime
             }))
         });
+
+    } catch (err) {
+        res.status(500).json({ erro: err.message });
     }
 };
