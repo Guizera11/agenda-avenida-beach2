@@ -78,6 +78,7 @@ module.exports = async function handler(req, res) {
             data: data.toISOString().split("T")[0],
             diaSemana,
             horarios: resultado,
+            totalEventos: eventos.length,
             debug: eventos.map(e => ({
                 titulo: e.summary,
                 inicio: e.start.dateTime,
