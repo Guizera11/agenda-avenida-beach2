@@ -38,6 +38,7 @@ module.exports = async function handler(req, res) {
             timeMax: fimDoDia.toISOString(),
             singleEvents: true,
             orderBy: "startTime",
+            maxResults: 50,
         });
 
         const eventos = resposta.data.items || [];
