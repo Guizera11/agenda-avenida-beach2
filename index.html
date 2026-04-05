@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Arena Avenida Beach — Disponibilidade</title>
+    <title>Avenida Beach — Esportes de Areia</title>
     <style>
         * {
             margin: 0;
@@ -13,13 +13,142 @@
         }
 
         body {
-            min-height: 100vh;
-            background: #4169e1;
             font-family: 'Segoe UI', sans-serif;
+            background: #4169e1;
+            scroll-behavior: smooth;
+        }
+
+        /* NAVBAR */
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+            background: rgba(20, 40, 120, 0.97);
+            backdrop-filter: blur(10px);
+            padding: 0 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 60px;
+            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .nav-logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .nav-logo img {
+            height: 36px;
+            filter: brightness(0) invert(1);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 4px;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: rgba(255, 255, 255, 0.75);
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 500;
+            padding: 8px 12px;
+            border-radius: 8px;
+            transition: all 0.2s;
+            white-space: nowrap;
+        }
+
+        .nav-links a:hover,
+        .nav-links a.ativo {
+            color: white;
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        /* MENU MOBILE */
+        .menu-toggle {
+            display: none;
+            background: none;
+            border: none;
+            cursor: pointer;
+            flex-direction: column;
+            gap: 5px;
+            padding: 4px;
+        }
+
+        .menu-toggle span {
+            display: block;
+            width: 22px;
+            height: 2px;
+            background: white;
+            border-radius: 2px;
+        }
+
+        .nav-mobile {
+            display: none;
+            position: fixed;
+            top: 60px;
+            left: 0;
+            right: 0;
+            background: rgba(20, 40, 120, 0.98);
+            z-index: 99;
+            padding: 12px 16px;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .nav-mobile.aberto {
+            display: flex;
+        }
+
+        .nav-mobile a {
+            color: rgba(255, 255, 255, 0.85);
+            text-decoration: none;
+            font-size: 15px;
+            padding: 12px 16px;
+            border-radius: 10px;
+            transition: all 0.2s;
+        }
+
+        .nav-mobile a:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+        }
+
+        /* SEÇÕES */
+        section {
+            min-height: 100vh;
+            padding: 80px 16px 40px;
             display: flex;
             flex-direction: column;
             align-items: center;
-            padding: 24px 16px;
+        }
+
+        section:nth-child(even) {
+            background: #3a5ecc;
+        }
+
+        section:nth-child(odd) {
+            background: #4169e1;
+        }
+
+        .secao-titulo {
+            color: white;
+            font-size: 13px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 24px;
+            opacity: 0.7;
+        }
+
+        /* HERO / DISPONIBILIDADE */
+        #disponibilidade {
+            padding-top: 80px;
         }
 
         .header {
@@ -27,16 +156,15 @@
             margin-bottom: 24px;
         }
 
-        .header h1 {
-            font-size: 22px;
-            font-weight: 700;
-            color: #ffffff;
+        .header img {
+            width: 200px;
+            filter: brightness(0) invert(1);
+            margin-bottom: 8px;
         }
 
         .header p {
+            color: rgba(255, 255, 255, 0.7);
             font-size: 13px;
-            color: #ffffff;
-            margin-top: 4px;
         }
 
         /* CALENDÁRIO */
@@ -46,7 +174,7 @@
             padding: 20px;
             width: 100%;
             max-width: 380px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
             margin-bottom: 20px;
         }
 
@@ -74,7 +202,7 @@
         }
 
         .cal-nav:hover {
-            background: #0c46f7;
+            background: #f0f4f8;
         }
 
         .cal-dias-semana {
@@ -141,11 +269,11 @@
             padding: 20px;
             width: 100%;
             max-width: 380px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
         }
 
         .card-horarios h2 {
-            font-size: 14px;
+            font-size: 12px;
             color: #888;
             text-transform: uppercase;
             letter-spacing: 1px;
@@ -168,12 +296,6 @@
             color: #1a1a2e;
         }
 
-        .horario-info {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
         .badge {
             font-size: 12px;
             padding: 4px 10px;
@@ -191,8 +313,9 @@
             color: #e53935;
         }
 
-        .vagas {
-            font-size: 12px;
+        .carregando {
+            text-align: center;
+            padding: 24px;
             color: #aaa;
         }
 
@@ -203,12 +326,6 @@
             font-size: 14px;
         }
 
-        .carregando {
-            text-align: center;
-            padding: 24px;
-            color: #aaa;
-        }
-
         .atualizacao {
             font-size: 11px;
             color: #bbb;
@@ -216,6 +333,244 @@
             margin-top: 16px;
         }
 
+        /* QUEM SOMOS */
+        #quem-somos {
+            justify-content: center;
+        }
+
+        .card-texto {
+            background: white;
+            border-radius: 20px;
+            padding: 36px;
+            max-width: 600px;
+            width: 100%;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        .card-texto h2 {
+            font-size: 22px;
+            color: #1a1a2e;
+            margin-bottom: 16px;
+        }
+
+        .card-texto p {
+            font-size: 15px;
+            color: #555;
+            line-height: 1.8;
+        }
+
+        .destaque-numero {
+            display: flex;
+            gap: 16px;
+            margin-top: 28px;
+            flex-wrap: wrap;
+        }
+
+        .numero-item {
+            flex: 1;
+            min-width: 100px;
+            background: #f0f4ff;
+            border-radius: 12px;
+            padding: 16px;
+            text-align: center;
+        }
+
+        .numero-item strong {
+            display: block;
+            font-size: 26px;
+            color: #4169e1;
+        }
+
+        .numero-item span {
+            font-size: 12px;
+            color: #888;
+        }
+
+        /* PREÇOS */
+        #precos {
+            justify-content: flex-start;
+            padding-top: 100px;
+        }
+
+        .precos-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 16px;
+            width: 100%;
+            max-width: 800px;
+        }
+
+        .preco-card {
+            background: white;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        .preco-header {
+            background: #1a2d6e;
+            color: white;
+            padding: 14px 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .preco-numero {
+            background: #e87e2a;
+            color: white;
+            width: 26px;
+            height: 26px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 13px;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+
+        .preco-header h3 {
+            font-size: 13px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+        }
+
+        .preco-body {
+            padding: 16px 20px;
+        }
+
+        .preco-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid #f0f0f0;
+            font-size: 14px;
+            color: #333;
+        }
+
+        .preco-item:last-child {
+            border-bottom: none;
+        }
+
+        .preco-item strong {
+            color: #1a2d6e;
+            font-size: 15px;
+        }
+
+        .preco-obs {
+            font-size: 12px;
+            color: #888;
+            margin-top: 8px;
+            font-style: italic;
+        }
+
+        .card-obs {
+            background: white;
+            border-radius: 16px;
+            padding: 20px;
+            max-width: 800px;
+            width: 100%;
+            margin-top: 16px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        .obs-header {
+            background: #1a2d6e;
+            color: white;
+            padding: 10px 16px;
+            border-radius: 10px;
+            font-size: 13px;
+            font-weight: 700;
+            margin-bottom: 12px;
+            letter-spacing: 0.5px;
+        }
+
+        .obs-item {
+            font-size: 13px;
+            color: #555;
+            padding: 6px 0;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .obs-item:last-child {
+            border-bottom: none;
+        }
+
+        .rodape-preco {
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.6);
+            margin-top: 16px;
+            font-style: italic;
+            text-align: center;
+        }
+
+        /* LOCALIZAÇÃO */
+        #localizacao {
+            justify-content: flex-start;
+            padding-top: 100px;
+        }
+
+        .localizacao-wrap {
+            width: 100%;
+            max-width: 600px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .card-contato {
+            background: white;
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        .card-contato h3 {
+            font-size: 16px;
+            color: #1a1a2e;
+            margin-bottom: 16px;
+            font-weight: 700;
+        }
+
+        .contato-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 10px 0;
+            border-bottom: 1px solid #f0f0f0;
+            font-size: 14px;
+            color: #555;
+        }
+
+        .contato-item:last-child {
+            border-bottom: none;
+        }
+
+        .contato-icon {
+            font-size: 18px;
+            flex-shrink: 0;
+        }
+
+        .mapa-btn {
+            display: block;
+            background: #4169e1;
+            color: white;
+            text-align: center;
+            padding: 14px;
+            border-radius: 12px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 14px;
+            transition: background 0.2s;
+        }
+
+        .mapa-btn:hover {
+            background: #3058cc;
+        }
+
+        /* WHATSAPP */
         .whatsapp-btn {
             position: fixed;
             bottom: 24px;
@@ -233,38 +588,204 @@
             align-items: center;
             gap: 8px;
             text-decoration: none;
+            z-index: 200;
         }
 
         .whatsapp-btn:hover {
             background: #20ba5a;
+        }
+
+        /* RESPONSIVE */
+        @media (max-width: 600px) {
+            .nav-links {
+                display: none;
+            }
+
+            .menu-toggle {
+                display: flex;
+            }
+
+            .preco-header h3 {
+                font-size: 12px;
+            }
+
+            .card-texto {
+                padding: 24px;
+            }
         }
     </style>
 </head>
 
 <body>
 
-    <div class="header">
-        <img src="/Logo_em_pdf_vetorizado2.png" alt="Arena Avenida Beach"
-            style="width: 220px; filter: brightness(0) invert(1);" />
-        <p style="color: white; margin-top: 8px;">Consulte a disponibilidade das quadras</p>
+    <!-- NAVBAR -->
+    <nav>
+        <div class="nav-logo">
+            <img src="/Logo_em_pdf_vetorizado2.png" alt="Avenida Beach" />
+        </div>
+        <ul class="nav-links">
+            <li><a href="#disponibilidade">Disponibilidade</a></li>
+            <li><a href="#quem-somos">Quem Somos</a></li>
+            <li><a href="#precos">Preços</a></li>
+            <li><a href="#localizacao">Localização</a></li>
+        </ul>
+        <button class="menu-toggle" id="menuToggle">
+            <span></span><span></span><span></span>
+        </button>
+    </nav>
+
+    <!-- MENU MOBILE -->
+    <div class="nav-mobile" id="navMobile">
+        <a href="#disponibilidade" onclick="fecharMenu()">🗓️ Disponibilidade</a>
+        <a href="#quem-somos" onclick="fecharMenu()">🏖️ Quem Somos</a>
+        <a href="#precos" onclick="fecharMenu()">💰 Preços</a>
+        <a href="#localizacao" onclick="fecharMenu()">📍 Localização</a>
     </div>
 
-    <div class="calendario">
-        <div class="cal-header">
-            <button class="cal-nav" id="btnAnterior">&#8249;</button>
-            <span id="mesAno"></span>
-            <button class="cal-nav" id="btnProximo">&#8250;</button>
+    <!-- SEÇÃO 1: DISPONIBILIDADE -->
+    <section id="disponibilidade">
+        <div class="header">
+            <img src="/Logo_em_pdf_vetorizado2.png" alt="Avenida Beach" />
+            <p>Consulte a disponibilidade das quadras</p>
         </div>
-        <div class="cal-dias-semana">
-            <span>Dom</span><span>Seg</span><span>Ter</span>
-            <span>Qua</span><span>Qui</span><span>Sex</span><span>Sáb</span>
-        </div>
-        <div class="cal-grid" id="calGrid"></div>
-    </div>
 
-    <div class="card-horarios" id="cardHorarios">
-        <div class="carregando">Selecione uma data no calendário</div>
-    </div>
+        <div class="calendario">
+            <div class="cal-header">
+                <button class="cal-nav" id="btnAnterior">&#8249;</button>
+                <span id="mesAno"></span>
+                <button class="cal-nav" id="btnProximo">&#8250;</button>
+            </div>
+            <div class="cal-dias-semana">
+                <span>Dom</span><span>Seg</span><span>Ter</span>
+                <span>Qua</span><span>Qui</span><span>Sex</span><span>Sáb</span>
+            </div>
+            <div class="cal-grid" id="calGrid"></div>
+        </div>
+
+        <div class="card-horarios" id="cardHorarios">
+            <div class="carregando">Selecione uma data no calendário</div>
+        </div>
+    </section>
+
+    <!-- SEÇÃO 2: QUEM SOMOS -->
+    <section id="quem-somos">
+        <p class="secao-titulo">Nossa história</p>
+        <div class="card-texto">
+            <h2>🏖️ Quem Somos</h2>
+            <p>Somos uma arena que nasceu da vontade de fazer diferente. Há mais de 5 anos no mercado, começamos
+                pequenos, ouvindo de perto a comunidade e crescendo junto com ela. Aqui, os próprios sócios estão à
+                frente de tudo. Colocamos a mão na massa no dia a dia, cuidando de cada detalhe com atenção e
+                responsabilidade.</p>
+            <br>
+            <p>Esse olhar de dono reflete em um atendimento próximo, preços justos e um ambiente pensado para que todos
+                se sintam bem. Mais do que clientes, criamos conexões. Já são quase 4 anos realizando campeonatos,
+                eventos e momentos que marcam quem passa por aqui.</p>
+            <br>
+            <p>Seguimos evoluindo sempre, com o mesmo propósito desde o início: fazer o melhor, para quem está com a
+                gente.</p>
+            <div class="destaque-numero">
+                <div class="numero-item">
+                    <strong>+5</strong>
+                    <span>Anos no mercado</span>
+                </div>
+                <div class="numero-item">
+                    <strong>4</strong>
+                    <span>Quadras</span>
+                </div>
+                <div class="numero-item">
+                    <strong>+4</strong>
+                    <span>Anos de campeonatos</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SEÇÃO 3: PREÇOS -->
+    <section id="precos">
+        <p class="secao-titulo">Tabela de valores</p>
+        <div class="precos-grid">
+
+            <div class="preco-card">
+                <div class="preco-header">
+                    <div class="preco-numero">1</div>
+                    <h3>VALORES — SEGUNDA A SEXTA</h3>
+                </div>
+                <div class="preco-body">
+                    <div class="preco-item"><span>Hora Diurno (8h às 18h)</span><strong>R$ 60,00</strong></div>
+                    <div class="preco-item"><span>Hora Noturno (19h, 20h, 21h)</span><strong>R$ 120,00</strong></div>
+                    <div class="preco-item"><span>Hora Preço Especial (18h, 22h, 23h)</span><strong>R$ 85,00</strong>
+                    </div>
+                    <div class="preco-item"><span>Mensal Noturno</span><strong>R$ 440,00</strong></div>
+                    <div class="preco-item"><span>Mensal Preço Especial</span><strong>R$ 300,00</strong></div>
+                    <p class="preco-obs">*Não cobramos a quinta semana no plano mensal</p>
+                </div>
+            </div>
+
+            <div class="preco-card">
+                <div class="preco-header">
+                    <div class="preco-numero">2</div>
+                    <h3>VALORES — SÁBADOS E DOMINGOS</h3>
+                </div>
+                <div class="preco-body">
+                    <div class="preco-item"><span>01 hora</span><strong>R$ 85,00</strong></div>
+                    <div class="preco-item"><span>02 horas</span><strong>R$ 140,00</strong></div>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="card-obs" style="max-width:800px;">
+            <div class="obs-header">3 — OBSERVAÇÕES</div>
+            <div class="obs-item">🎾 Alugamos raquete de Beach Tennis: R$ 5,00 cada</div>
+            <div class="obs-item">🏐 Bolas inclusas no aluguel (3 modalidades)</div>
+            <div class="obs-header" style="margin-top:12px;">4 — HORÁRIO DE ATENDIMENTO</div>
+            <div class="obs-item">Segunda à Sexta: 8h às 00h</div>
+            <div class="obs-item">Sábado e Domingo: 9h às 22h</div>
+            <div class="obs-header" style="margin-top:12px;">5 — POLÍTICA DE DESISTÊNCIA</div>
+            <div class="obs-item">⚠️ Para desistência dentro de 8 horas antes do horário, será cobrado 50% do valor da
+                quadra.</div>
+        </div>
+
+        <p class="rodape-preco">*Valores sujeitos a alteração sem aviso prévio.</p>
+    </section>
+
+    <!-- SEÇÃO 4: LOCALIZAÇÃO -->
+    <section id="localizacao">
+        <p class="secao-titulo">Onde nos encontrar</p>
+        <div class="localizacao-wrap">
+            <div class="card-contato">
+                <h3>📍 Localização e Contato</h3>
+                <div class="contato-item">
+                    <span class="contato-icon">🏠</span>
+                    <span>Av. Osvaldo José do Amaral — Areias, São José - SC, 88113-848</span>
+                </div>
+                <div class="contato-item">
+                    <span class="contato-icon">⏰</span>
+                    <span>Seg–Sex: 8h às 00h &nbsp;|&nbsp; Sáb–Dom: 9h às 22h</span>
+                </div>
+                <div class="contato-item">
+                    <span class="contato-icon">📱</span>
+                    <span>WhatsApp: (48) 9XXXX-XXXX</span>
+                </div>
+            </div>
+            <a class="mapa-btn"
+                href="https://www.google.com/maps/dir//Avenida+Beach+-+Areias,+Av.+Osvaldo+Jos%C3%A9+do+Amaral+-+Areias,+S%C3%A3o+Jos%C3%A9+-+SC,+88113-848"
+                target="_blank">
+                📍 Abrir no Google Maps
+            </a>
+        </div>
+    </section>
+
+    <!-- WHATSAPP FIXO -->
+    <a class="whatsapp-btn"
+        href="https://wa.me/5548XXXXXXXX?text=Olá!%20Gostaria%20de%20fazer%20uma%20reserva%20na%20Arena%20Avenida%20Beach!"
+        target="_blank">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="white">
+            <path
+                d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" />
+        </svg>
+        Reservar via WhatsApp
+    </a>
 
     <script>
         const MESES = ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho",
@@ -288,14 +809,12 @@
             const primeiroDia = new Date(anoAtual, mesAtual, 1).getDay();
             const diasNoMes = new Date(anoAtual, mesAtual + 1, 0).getDate();
 
-            // Dias do mês anterior
             for (let i = 0; i < primeiroDia; i++) {
                 const div = document.createElement("div");
                 div.className = "cal-dia outro-mes";
                 grid.appendChild(div);
             }
 
-            // Dias do mês atual
             for (let d = 1; d <= diasNoMes; d++) {
                 const div = document.createElement("div");
                 const dataAtual = new Date(anoAtual, mesAtual, d);
@@ -338,26 +857,24 @@
                     return;
                 }
 
+                const horaAtual = new Date().getHours();
+                const ehHoje = dados.data === formatarData(new Date());
                 const agora = new Date().toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" });
 
                 let html = `<h2>Horários disponíveis</h2>`;
-                const horaAtual = new Date().getHours();
-                const ehHoje = dados.data === formatarData(new Date());
-
                 dados.horarios.filter(h => {
                     if (!ehHoje) return true;
                     return parseInt(h.hora) >= horaAtual;
                 }).forEach(h => {
-                    const horaFim = String(parseInt(h.hora) + 1).padStart(2, "0") + ":00";
                     html += `
-                        <div class="horario-item">
-                            <div class="horario-hora">${h.hora}</div>
-                            <div class="horario-info">
-                                <span class="badge ${h.disponivel ? "disponivel" : "indisponivel"}">
-                                ${h.disponivel ? "Disponível" : "Lotado"}
-                                </span>
-                            </div>
-                        </div>`;
+            <div class="horario-item">
+              <div class="horario-hora">${h.hora}</div>
+              <div class="horario-info">
+                <span class="badge ${h.disponivel ? "disponivel" : "indisponivel"}">
+                  ${h.disponivel ? "Disponível" : "Lotado"}
+                </span>
+              </div>
+            </div>`;
                 });
 
                 html += `<div class="atualizacao">Atualizado às ${agora}</div>`;
@@ -380,22 +897,34 @@
             renderizarCalendario();
         });
 
+        // Menu mobile
+        document.getElementById("menuToggle").addEventListener("click", () => {
+            document.getElementById("navMobile").classList.toggle("aberto");
+        });
+
+        function fecharMenu() {
+            document.getElementById("navMobile").classList.remove("aberto");
+        }
+
+        // Highlight menu ativo ao rolar
+        window.addEventListener("scroll", () => {
+            const secoes = ["disponibilidade", "quem-somos", "precos", "localizacao"];
+            const links = document.querySelectorAll(".nav-links a");
+            let atual = "";
+            secoes.forEach(id => {
+                const el = document.getElementById(id);
+                if (el && window.scrollY >= el.offsetTop - 80) atual = id;
+            });
+            links.forEach(a => {
+                a.classList.toggle("ativo", a.getAttribute("href") === `#${atual}`);
+            });
+        });
+
         renderizarCalendario();
-        // Carrega hoje automaticamente
         dataSelecionada = hoje;
         renderizarCalendario();
         carregarHorarios(formatarData(hoje));
     </script>
-
-    <a class="whatsapp-btn"
-        href="https://wa.me/5548996997419?text=Olá!%20Gostaria%20de%20fazer%20uma%20reserva%20na%20Arena%20Avenida%20Beach!"
-        target="_blank">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="white">
-            <path
-                d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" />
-        </svg>
-        Reservar via WhatsApp
-    </a>
 </body>
 
 </html>
