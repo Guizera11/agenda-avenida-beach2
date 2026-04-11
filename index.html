@@ -852,7 +852,7 @@
                     return;
                 }
 
-                if (!dados.horariosCheios && !dados.horariosQuebrados) {
+                if ((!dados.horariosCheios || dados.horariosCheios.length === 0) && (!dados.horariosQuebrados || dados.horariosQuebrados.length === 0)) {
                     card.innerHTML = `<div class="fechado">🔒 Arena fechada neste dia</div>`;
                     return;
                 }
