@@ -32,7 +32,7 @@ module.exports = async function handler(req, res) {
         const fimDoDia = new Date(dataStr + "T23:59:59-03:00");
 
         const resposta = await calendar.events.list({
-            calendarId: "avenidabeach2@gmail.com",
+            calendarId: "c0616ad1422a8d5043d11f746c51119856b41a91f9ab22d08bef667c7e5e6121@group.calendar.google.com",
             timeMin: inicioDoDia.toISOString(),
             timeMax: fimDoDia.toISOString(),
             singleEvents: true,
