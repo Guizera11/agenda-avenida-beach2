@@ -861,21 +861,35 @@
                 const ehHoje = dados.data === formatarData(new Date());
                 const agora = new Date().toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" });
 
+                const todos = [...(dados.horariosCheios || []), ...(dados.horariosQuebrados || [])]
+                    .filter(h => h.disponivel)
+                    .filter(h => {
+                        if (!ehHoje) return true;
+                        const [hora, min] = h.hora.split(":").map(Number);
+                        const horaMin = hora * 60 + min;
+                        return horaMin >= horaAtual * 60;
+                    })
+                    .sort((a, b) => {
+                        const [ah, am] = a.hora.split(":").map(Number);
+                        const [bh, bm] = b.hora.split(":").map(Number);
+                        return (ah * 60 + am) - (bh * 60 + bm);
+                    });
+
                 let html = `<h2>Horários disponíveis</h2>`;
-                dados.horarios.filter(h => {
-                    if (!ehHoje) return true;
-                    return parseInt(h.hora) >= horaAtual;
-                }).forEach(h => {
-                    html += `
-            <div class="horario-item">
-              <div class="horario-hora">${h.hora}</div>
-              <div class="horario-info">
-                <span class="badge ${h.disponivel ? "disponivel" : "indisponivel"}">
-                  ${h.disponivel ? "Disponível" : "Lotado"}
-                </span>
-              </div>
-            </div>`;
-                });
+
+                if (todos.length === 0) {
+                    html += `<div class="fechado">Nenhum horário disponível para este dia.</div>`;
+                } else {
+                    todos.forEach(h => {
+                        html += `
+      <div class="horario-item">
+        <div class="horario-hora">${h.hora}</div>
+        <div class="horario-info">
+          <span class="badge disponivel">Disponível</span>
+        </div>
+      </div>`;
+                    });
+                }
 
                 html += `<div class="atualizacao">Atualizado às ${agora}</div>`;
                 card.innerHTML = html;
